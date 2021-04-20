@@ -1,6 +1,8 @@
 import csv
 import click
+from rich.console import Console
 
+console = Console()
 
 def load_votes(filename: str = "test.csv") -> list[list[str]]:
     choices = []
@@ -40,7 +42,7 @@ def run_round(all_choices: list[list[str]], threshold: float) -> str:
         winners = [candidate for candidate, count in choice_counts.items()
                    if count == max_votes and count > total_count * threshold]
         if len(winners) == 1:
-            print(f"{winners[0]} HAS WON A SEAT - WITH {max_votes} VOTES!")
+            console.print(f"{winners[0]} HAS WON A SEAT - WITH {max_votes} VOTES!")
             winner = winners[0]
         else:
             min_count = min(choice_counts.values())
@@ -49,7 +51,7 @@ def run_round(all_choices: list[list[str]], threshold: float) -> str:
                 loser = input(f"\nWHO GETS ELIMINATED? {losers}\n")
                 if len(choice_counts) == 2:
                     winner = (choice_counts.keys() - {loser}).pop()
-                    print(f"{winner} HAS WON A SEAT - WITH {choice_counts[winner] + 1} VOTES!")
+                    console.print(f"{winner} HAS WON A SEAT - WITH {choice_counts[winner] + 1} VOTES!")
                     continue
             else:
                 loser = losers[0]
@@ -73,11 +75,11 @@ def run(all_choices: list[list[str]], seats: int, threshold: float):
 @click.option('--file', '-f', help='the csv file representing the fraternity\'s ballots in this standards election',
               type=click.Path(exists=True), required=True)
 def main(seats: int, file: str):
-    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-    print("  Standards Election Script (For AKS)")
-    print("      --------------------------")
-    print("    Brought to you by: David Malakh")
-    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n")
+    console.print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~", style="bold green")
+    console.print("  Standards Election Script (For AKS)")
+    console.print("      --------------------------")
+    console.print("    Brought to you by: David Malakh")
+    console.print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n", style="bold green")
     data = load_votes(file)
     run(data, seats, threshold=0.5)
 
